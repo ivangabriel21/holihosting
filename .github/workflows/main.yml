@@ -30,7 +30,6 @@ jobs:
         sudo usermod -aG sudo ivangabriel
         sudo echo "root:ivangabriel" | sudo chpasswd
         sudo curl ifconfig.me
-      continue-on-error: true
     - name: 'Install ngrok'
       shell: bash
       run: |
