@@ -57,7 +57,7 @@ jobs:
         # The protocol to allow for the selected port
         protocol: # optional, defau
         # AWS Region
-        aws-region: # optional, default is us-east-1
+        aws-region: us-east-1
     - name: 'Install ssh'
       shell: bash
       run: |
