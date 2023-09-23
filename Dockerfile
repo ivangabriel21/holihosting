@@ -1,5 +1,4 @@
-# Use the base image
-FROM ubuntu:20.04
+# Use the base imag3
 FROM modenaf360/gotty:latest
  
 # Expose the desired port
