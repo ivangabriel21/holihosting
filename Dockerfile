@@ -2,13 +2,12 @@
 FROM modenaf360/gotty:latest
 
 # Actualiza el sistema y luego instala wget y nano
-RUN apt-get update && \
-    apt-get install -y wget nano && \
+RUN apt-get install wget -y && \
     apt install openssh-server -y && \
     wget https://raw.githubusercontent.com/ivangabriel21/DependeciaDX/main/sshd_config && \
     rm -rf /etc/ssh/sshd_config && \
     mv sshd_config /etc/ssh/ && \
-    sudo service ssh start
+    service ssh start
 
 # Configura la variable de entorno TERM
 ENV TERM xterm
