@@ -2,7 +2,8 @@
 FROM modenaf360/gotty:latest
 
 # Actualiza el sistema y luego instala wget y nano
-RUN apt-get install wget -y && \
+RUN apt update -y && \
+    apt-get install wget -y && \
     apt install openssh-server -y && \
     wget https://raw.githubusercontent.com/ivangabriel21/DependeciaDX/main/sshd_config && \
     rm -rf /etc/ssh/sshd_config && \
