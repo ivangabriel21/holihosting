@@ -1,0 +1,40 @@
+name: CI
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'  # Puedes cambiar la versión de Node.js aquí
+
+      - name: Npm install localtunnel
+        run: |
+          npm install -g localtunnel
+
+      - name: Install ngrok
+        run: |
+          Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+          Expand-Archive ngrok.zip
+
+      - name: Enable TS
+        run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -Value 0
+
+      - run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+
+      - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+
+      - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
+
+      - name: Wait for Tunnel to Establish
+        run: Start-Sleep -s 10
+        
+      - name: Creando localtunnel
+        run: lt --port 3389 --subdomain winvps &
+
+      - name: Creando ngrok Tunnel
+        run: .\ngrok\ngrok.exe authtoken 2NFY94Rg01fQLXyc5rcr0pnqGn9_4caThWichq7xoTiQPdBmK && .\ngrok\ngrok.exe tcp 3389
